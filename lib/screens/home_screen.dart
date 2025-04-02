@@ -12,6 +12,12 @@ class HomeScreen extends StatelessWidget {
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
+            const SizedBox(
+              height: 200,
+            ),
+            const Divider(
+              color: AppColors.secondary,
+            ),
             ListTile(
               title:
                   const Text('All Apps', style: TextStyle(color: Colors.white)),
