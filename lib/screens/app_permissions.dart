@@ -42,6 +42,7 @@ class _AppPermissionsPageState extends State<AppPermissionsPage> {
         ),
         backgroundColor: Color(0xFF150050), // Matching background
         elevation: 0, // Removes shadow under the AppBar
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: _apps.isEmpty
           ? Center(child: CircularProgressIndicator())
