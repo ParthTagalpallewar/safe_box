@@ -50,7 +50,22 @@ class AppInfoHelper(private val context: Context) {
     private fun getAppIconBase64(packageManager: PackageManager, packageName: String): String {
         return try {
             val drawable = packageManager.getApplicationIcon(packageName)
-            val bitmap = (drawable as BitmapDrawable).bitmap
+
+            val bitmap = if (drawable is BitmapDrawable) {
+                drawable.bitmap
+            } else {
+                // Convert AdaptiveIconDrawable to Bitmap
+                val bitmap = Bitmap.createBitmap(
+                    drawable.intrinsicWidth,
+                    drawable.intrinsicHeight,
+                    Bitmap.Config.ARGB_8888
+                )
+                val canvas = android.graphics.Canvas(bitmap)
+                drawable.setBounds(0, 0, canvas.width, canvas.height)
+                drawable.draw(canvas)
+                bitmap
+            }
+
             val outputStream = ByteArrayOutputStream()
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
             val byteArray = outputStream.toByteArray()
