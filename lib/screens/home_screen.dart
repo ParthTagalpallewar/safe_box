@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/theme.dart';
-
+import './app_permissions.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -21,7 +21,12 @@ class HomeScreen extends StatelessWidget {
             ListTile(
               title:
                   const Text('All Apps', style: TextStyle(color: Colors.white)),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AppPermissionsPage()),
+                );
+              },
             ),
             ListTile(
               title: const Text('Notification',
