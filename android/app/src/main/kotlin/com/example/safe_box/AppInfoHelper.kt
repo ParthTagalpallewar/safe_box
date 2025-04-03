@@ -21,6 +21,10 @@ class AppInfoHelper(private val context: Context) {
         val appsArray = JSONArray()
 
         for (app in installedApps) {
+
+            if ((app.flags and android.content.pm.ApplicationInfo.FLAG_SYSTEM) != 0) {
+                continue
+            }
             val appObject = JSONObject()
             appObject.put("appName", app.loadLabel(packageManager).toString())
             appObject.put("packageName", app.packageName)
