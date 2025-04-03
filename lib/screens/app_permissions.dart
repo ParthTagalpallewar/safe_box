@@ -36,31 +36,35 @@ class _AppPermissionsPageState extends State<AppPermissionsPage> {
     return Scaffold(
       backgroundColor: Color(0xFF150050), // Background color
       appBar: AppBar(
-        title: Text(
-          "Installed Apps & Permissions",
-          style: TextStyle(color: Colors.white),
+        title: const Text(
+          "Installed Apps",
+          style: TextStyle(color: Colors.white, fontSize: 20),
         ),
         backgroundColor: Color(0xFF150050), // Matching background
         elevation: 0, // Removes shadow under the AppBar
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: _apps.isEmpty
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16), // Left-right margin
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        // Left-right margin
         child: ListView.builder(
           itemCount: _apps.length,
-          padding: EdgeInsets.only(top: 10, bottom: 10),
+          padding: const EdgeInsets.only(top: 10, bottom: 10),
           itemBuilder: (context, index) {
             final app = _apps[index];
 
             return Container(
-              margin: EdgeInsets.only(bottom: 12), // Space between tiles
+              margin: const EdgeInsets.only(bottom: 12), // Space between tiles
               decoration: BoxDecoration(
-                color: Color(0xFF3E1F92), // Tile background color
-                borderRadius: BorderRadius.circular(12), // Rounded corners
-                border: Border.all(color: Colors.white54, width: 1), // Border color
-                boxShadow: [
+                color: const Color(0xFF3E1F92),
+                // Tile background color
+                borderRadius: BorderRadius.circular(12),
+                // Rounded corners
+                border: Border.all(color: Colors.white54, width: 1),
+                // Border color
+                boxShadow: const [
                   BoxShadow(
                     color: Colors.black26,
                     blurRadius: 5,
@@ -68,9 +72,9 @@ class _AppPermissionsPageState extends State<AppPermissionsPage> {
                   ),
                 ],
               ),
-              child: ExpansionTile(
-                iconColor: Colors.white, // Arrow icon color when expanded
-                collapsedIconColor: Colors.white, // Arrow icon color when collapsed
+              child: ListTile(
+                contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16, vertical: 8),
                 leading: ClipOval(
                   child: app['icon'] != null && app['icon'].isNotEmpty
                       ? Image.memory(
@@ -79,27 +83,31 @@ class _AppPermissionsPageState extends State<AppPermissionsPage> {
                     height: 40,
                     fit: BoxFit.cover,
                   )
-                      : Icon(Icons.android, size: 40, color: Colors.white),
+                      : const Icon(
+                      Icons.android, size: 40, color: Colors.white),
                 ),
                 title: Text(
                   app['appName'],
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Colors.white, // Text color
                   ),
+                  maxLines: 1, // Restrict to a single line
+                  overflow: TextOverflow.ellipsis, // Show "..." if it overflows
                 ),
                 subtitle: Text(
                   app['packageName'],
-                  style: TextStyle(color: Colors.white70), // Subtitle color
+                  style: const TextStyle(
+                      color: Colors.white70), // Subtitle color
                 ),
-                children: (app['permissions'] as List)
-                    .map<Widget>((perm) => ListTile(
-                  title: Text(
-                    perm,
-                    style: TextStyle(fontSize: 14, color: Colors.white),
-                  ),
-                ))
-                    .toList(),
+                trailing: const Icon(
+                  Icons.arrow_forward_ios, // Forward arrow icon
+                  color: Colors.white,
+                  size: 16, // Smaller size
+                ),
+                onTap: () {
+                  // Add navigation or action if needed
+                },
               ),
             );
           },
@@ -108,7 +116,3 @@ class _AppPermissionsPageState extends State<AppPermissionsPage> {
     );
   }
 }
-
-
-
-
