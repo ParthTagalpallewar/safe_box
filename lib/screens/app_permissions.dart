@@ -1,4 +1,9 @@
 
+
+
+
+
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -92,14 +97,59 @@ class _AppPermissionsPageState extends State<AppPermissionsPage> {
                   app['packageName'],
                   style: TextStyle(color: Colors.white70), // Subtitle color
                 ),
-                children: (app['permissions'] as List)
-                    .map<Widget>((perm) => ListTile(
-                  title: Text(
-                    perm,
-                    style: TextStyle(fontSize: 14, color: Colors.white),
+                children: [
+                  // Display risk score
+                  ListTile(
+                    title: Text(
+                      "Risk Score: ${app['riskScore']?.toStringAsFixed(1) ?? 'N/A'} / 1000",
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
                   ),
-                ))
-                    .toList(),
+
+                  // Display usage history section
+                  // if (app['permissionUsageHistory'] != null &&
+                  //     app['permissionUsageHistory'].isNotEmpty)
+                  //   Padding(
+                  //     padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4),
+                  //     child: Text(
+                  //       "Permission Usage History:",
+                  //       style: TextStyle(
+                  //           color: Colors.amberAccent,
+                  //           fontWeight: FontWeight.bold,
+                  //           fontSize: 14),
+                  //     ),
+                  //   ),
+                  // ...(app['permissionUsageHistory'] as Map<String, dynamic>).entries.map<Widget>((entry) {
+                  //   return ListTile(
+                  //     title: Text(
+                  //       "${entry.key} → Last used: ${DateTime.fromMillisecondsSinceEpoch(entry.value).toLocal()}",
+                  //       style: TextStyle(fontSize: 13, color: Colors.white),
+                  //     ),
+                  //   );
+                  // }).toList(),
+
+
+                  // Permissions section
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4),
+                    child: Text(
+                      "Permissions:",
+                      style: TextStyle(
+                          color: Colors.lightBlueAccent,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14),
+                    ),
+                  ),
+                  ...(app['permissions'] as List)
+                      .map<Widget>((perm) => ListTile(
+                    title: Text(
+                      perm,
+                      style: TextStyle(fontSize: 14, color: Colors.white),
+                    ),
+                  ))
+                      .toList(),
+                ],
+
               ),
             );
           },
@@ -108,6 +158,11 @@ class _AppPermissionsPageState extends State<AppPermissionsPage> {
     );
   }
 }
+
+
+
+
+
 
 
 
