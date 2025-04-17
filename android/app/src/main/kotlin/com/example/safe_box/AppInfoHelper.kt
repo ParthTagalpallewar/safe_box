@@ -14,6 +14,16 @@ import java.io.ByteArrayOutputStream
 
 class AppInfoHelper(private val context: Context) {
 
+    private fun isSystemApp(app: android.content.pm.ApplicationInfo): Boolean {
+        return (app.flags and android.content.pm.ApplicationInfo.FLAG_SYSTEM) != 0
+    }
+
+    private fun isLaunchableApp(pm: PackageManager, packageName: String): Boolean {
+        val launchIntent = pm.getLaunchIntentForPackage(packageName)
+        return launchIntent != null
+    }
+
+
     fun getInstalledAppsWithPermissions(): String {
         val packageManager = context.packageManager
         val installedApps = packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
@@ -22,7 +32,10 @@ class AppInfoHelper(private val context: Context) {
 
         for (app in installedApps) {
 
-            if ((app.flags and android.content.pm.ApplicationInfo.FLAG_SYSTEM) != 0) {
+//            if ((app.flags and android.content.pm.ApplicationInfo.FLAG_SYSTEM) != 0) {
+//                continue
+//            }
+            if (isSystemApp(app) || !isLaunchableApp(packageManager, app.packageName)) {
                 continue
             }
             val appObject = JSONObject()
@@ -52,9 +65,8 @@ class AppInfoHelper(private val context: Context) {
             val drawable = packageManager.getApplicationIcon(packageName)
 
             val bitmap = if (drawable is BitmapDrawable) {
-                drawable.bitmap
+                drawable.bitmap.copy(Bitmap.Config.ARGB_8888, true)
             } else {
-                // Convert AdaptiveIconDrawable to Bitmap
                 val bitmap = Bitmap.createBitmap(
                     drawable.intrinsicWidth,
                     drawable.intrinsicHeight,
@@ -65,6 +77,7 @@ class AppInfoHelper(private val context: Context) {
                 drawable.draw(canvas)
                 bitmap
             }
+
 
             val outputStream = ByteArrayOutputStream()
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)

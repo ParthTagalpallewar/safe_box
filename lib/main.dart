@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/app_permissions.dart'; // Import the app permissions page
+// Import the app permissions page
 import 'screens/splash_screen.dart';
 import 'theme/theme.dart';
 
