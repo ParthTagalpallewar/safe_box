@@ -1,8 +1,10 @@
 
-
+//1st itration of risk caculation
 package com.example.safe_box
 
+import android.app.AppOpsManager
 import android.content.Context
+import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -32,24 +34,32 @@ class AppInfoHelper(private val context: Context) {
 
         for (app in installedApps) {
 
-//            if ((app.flags and android.content.pm.ApplicationInfo.FLAG_SYSTEM) != 0) {
-//                continue
-//            }
-            if (isSystemApp(app) || !isLaunchableApp(packageManager, app.packageName)) {
+//<<<<<<< HEAD
+////            if ((app.flags and android.content.pm.ApplicationInfo.FLAG_SYSTEM) != 0) {
+////                continue
+////            }
+//            if (isSystemApp(app) || !isLaunchableApp(packageManager, app.packageName)) {
+//=======
+            if ((app.flags and ApplicationInfo.FLAG_SYSTEM) != 0) {
+//>>>>>>> origin/home_screen
                 continue
             }
+
+            val permissions = getAppPermissions(packageManager, app.packageName)
+            val riskScore = calculateRiskScore(packageManager, app, permissions)
+
             val appObject = JSONObject()
             appObject.put("appName", app.loadLabel(packageManager).toString())
             appObject.put("packageName", app.packageName)
-            appObject.put("permissions", JSONArray(getAppPermissions(packageManager, app.packageName)))
-            appObject.put("icon", getAppIconBase64(packageManager, app.packageName)) // Adding the icon
+            appObject.put("permissions", JSONArray(permissions))
+            appObject.put("riskScore", riskScore)
+            appObject.put("icon", getAppIconBase64(packageManager, app.packageName))
 
             appsArray.put(appObject)
         }
 
         return appsArray.toString()
     }
-
 
     private fun getAppPermissions(packageManager: PackageManager, packageName: String): List<String> {
         return try {
@@ -63,7 +73,6 @@ class AppInfoHelper(private val context: Context) {
     private fun getAppIconBase64(packageManager: PackageManager, packageName: String): String {
         return try {
             val drawable = packageManager.getApplicationIcon(packageName)
-
             val bitmap = if (drawable is BitmapDrawable) {
                 drawable.bitmap.copy(Bitmap.Config.ARGB_8888, true)
             } else {
@@ -86,6 +95,49 @@ class AppInfoHelper(private val context: Context) {
         } catch (e: Exception) {
             ""
         }
+    }
+
+    private fun calculateRiskScore(
+        packageManager: PackageManager,
+        appInfo: ApplicationInfo,
+        permissions: List<String>
+    ): Int {
+        val dangerousPermissions = listOf(
+            "android.permission.READ_CONTACTS",
+            "android.permission.ACCESS_FINE_LOCATION",
+            "android.permission.RECORD_AUDIO",
+            "android.permission.CAMERA",
+            "android.permission.SEND_SMS",
+            "android.permission.READ_SMS",
+            "android.permission.READ_PHONE_STATE",
+            "android.permission.WRITE_EXTERNAL_STORAGE"
+        )
+
+        var score = 0
+
+        // 1. Internet permission
+        if (permissions.contains("android.permission.INTERNET")) {
+            score += 15
+        }
+
+        // 2. Number of permissions
+        score += permissions.size * 2
+
+        // 3. Dangerous permissions count
+        val dangerousCount = permissions.count { it in dangerousPermissions }
+        score += dangerousCount * 10
+
+        // 4. Obscure developer/package name
+        if (!appInfo.packageName.startsWith("com.") && !appInfo.packageName.startsWith("org.")) {
+            score += 10
+        }
+
+        // 5. System vs User app
+        if ((appInfo.flags and ApplicationInfo.FLAG_SYSTEM) == 0) {
+            score += 5
+        }
+
+        return score
     }
 }
 
