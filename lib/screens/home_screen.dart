@@ -41,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
           no++;
         } else if (score < 100) {
           low++;
-        } else if (score < 250) {
+        } else if (score < 200) {
           med++;
         } else {
           high++;
@@ -70,9 +70,9 @@ class _HomeScreenState extends State<HomeScreen> {
         case 'low':
           return score >= 50 && score < 100;
         case 'medium':
-          return score >= 100 && score < 250;
+          return score >= 100 && score < 200;
         case 'high':
-          return score >= 250;
+          return score >= 200;
         default:
           return false;
       }
@@ -109,10 +109,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ListTile(
               title: const Text('All Apps', style: TextStyle(color: Colors.white)),
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const AppPermissionsPage()),
-                );
+                // You can pass an empty string or some other logic for 'All Apps' if necessary
+                _navigateToFilteredApps('');
               },
             ),
             ListTile(
@@ -123,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       appBar: AppBar(
-        backgroundColor: AppColors.primary,
+        backgroundColor: const Color(0xFF150050),
         leading: Builder(
           builder: (context) => IconButton(
             icon: const Icon(Icons.menu, color: AppColors.secondary),
@@ -134,7 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       body: Container(
-        color: AppColors.primary,
+        color: const Color(0xFF150050),
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
         child: Column(
@@ -188,7 +186,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildGauge(String title, Color color, double value) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.secondary.withOpacity(0.1),
+        color: const Color(0xFF3E1F92),
         borderRadius: BorderRadius.circular(20),
       ),
       padding: const EdgeInsets.all(12),
@@ -232,7 +230,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     GaugeAnnotation(
                       widget: Text(
                         '${value.toInt()}%',
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
                       ),
                       angle: 90,
                       positionFactor: 0.78,
@@ -243,7 +241,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           const SizedBox(height: 8),
-          Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+          Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white)),
         ],
       ),
     );

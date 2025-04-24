@@ -5,7 +5,10 @@ import 'AppPermissionsDetailPage.dart';
 import 'AppPermissionsDetailPage.dart'; // The new page to show app permissions
 
 class AppPermissionsPage extends StatefulWidget {
-  const AppPermissionsPage({super.key});
+  final List<Map<String, dynamic>> filteredApps;  // Add this line
+
+  // Modify the constructor to accept filteredApps
+  const AppPermissionsPage({super.key, required this.filteredApps});
 
   @override
   _AppPermissionsPageState createState() => _AppPermissionsPageState();
@@ -18,21 +21,21 @@ class _AppPermissionsPageState extends State<AppPermissionsPage> {
   @override
   void initState() {
     super.initState();
-    _fetchInstalledApps();
+    _apps = widget.filteredApps;
   }
 
-  Future<void> _fetchInstalledApps() async {
-    try {
-      final String result = await platform.invokeMethod("getInstalledApps");
-      final List<dynamic> jsonData = json.decode(result);
-
-      setState(() {
-        _apps = jsonData.map((app) => Map<String, dynamic>.from(app)).toList();
-      });
-    } catch (e) {
-      print("Failed to fetch apps: $e");
-    }
-  }
+  // Future<void> _fetchInstalledApps() async {
+  //   try {
+  //     final String result = await platform.invokeMethod("getInstalledApps");
+  //     final List<dynamic> jsonData = json.decode(result);
+  //
+  //     setState(() {
+  //       _apps = jsonData.map((app) => Map<String, dynamic>.from(app)).toList();
+  //     });
+  //   } catch (e) {
+  //     print("Failed to fetch apps: $e");
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -57,19 +60,30 @@ class _AppPermissionsPageState extends State<AppPermissionsPage> {
           itemBuilder: (context, index) {
             final app = _apps[index];
             return GestureDetector(
+              // onTap: () {
+              //   // Navigate to the permissions page for the selected app
+              //   Navigator.push(
+              //     context,
+              //     MaterialPageRoute(
+              //       builder: (context) =>
+              //           AppPermissionsDetailPage(
+              //             appName: app['appName'],
+              //             packageName: app['packageName'],
+              //           ),
+              //     ),
+              //   );
+              // },
               onTap: () {
-                // Navigate to the permissions page for the selected app
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        AppPermissionsDetailPage(
-                          appName: app['appName'],
-                          packageName: app['packageName'],
-                        ),
+                    builder: (context) => AppPermissionsDetailPage(
+                      app: app,
+                    ),
                   ),
                 );
               },
+
               child: Container(
                 margin: const EdgeInsets.only(bottom: 12),
                 decoration: BoxDecoration(
